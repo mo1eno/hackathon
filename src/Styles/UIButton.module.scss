@@ -1,0 +1,46 @@
+.UIButton.string{
+    display: flex;
+    color: #fff;
+    background-color: #a430cd;
+    padding: 0 15px;
+    height: 40px;
+    align-items: center;
+    border-radius: 7px;
+    user-select: none;
+    cursor: pointer;
+}
+.UIButton.active{
+    display: flex;
+    color: #fff;
+    background-color: #ff0000;
+    padding: 0 15px;
+    height: 40px;
+    align-items: center;
+    border-radius: 7px;
+    user-select: none;
+    cursor: pointer;
+}
+.UIButton.number{
+    display: flex;
+    color: #fff;
+    background-color: #a430cd;
+    padding: 0 15px;
+    height: 40px;
+    align-items: center;
+    border-radius: 7px;
+    user-select: none;
+    cursor: pointer;
+    width: fit-content;
+    justify-content: center;
+    
+}
+.UIButton:hover{
+    scale: 1.1;
+    transition: 0.2s;
+}
+.UIButton:not(:hover){
+    transition: 0.2s;
+}
+.UIButton:active{
+    scale: 1;
+}

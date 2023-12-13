@@ -1,0 +1,28 @@
+.Card{
+    background: rgb(255, 255, 255);
+    box-shadow: 0 0 15px rgba(0,0,0,.1);
+    width: 350px;
+    height: 450px;
+    padding: 20px;
+    text-align: center;
+    border-radius: 7px;
+    margin: 30px 0;
+    &__Skills{
+        &-list{
+            font-size: 20px;
+            text-align: left;
+        }
+    }
+    &__button{
+        display: flex;
+        justify-content: center;
+    }
+}
+.Card:hover{
+    scale: 1.1;
+    transition: 0.2s;
+}
+.Card:not(:hover){
+    scale: 1;
+    transition: 0.2s;
+}
