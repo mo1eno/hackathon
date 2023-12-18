@@ -7,16 +7,20 @@
     padding: 20px;
     text-align: center;
     border-radius: 7px;
-    margin: 30px 0;
+    margin: 20px 0px 100px 0;
+    
+    position: relative;
     &__Skills{
         &-list{
             font-size: 20px;
-            text-align: left;
+            text-align: center;
         }
     }
     &__button{
-        display: flex;
-        justify-content: center;
+        position: absolute;
+        bottom: 20px;
+        left: 50%; 
+        transform: translateX(-50%);
     }
 }
 .Card:hover{
@@ -27,3 +31,6 @@
     scale: 1;
     transition: 0.2s;
 }
+.Card:not(:last-child) {
+    margin-bottom: 0;
+  }

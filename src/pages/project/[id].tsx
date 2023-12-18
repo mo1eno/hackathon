@@ -1,15 +1,23 @@
 import { IProject, IProjectMembers, IStudent } from "@/types/project";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UIButton from "@/components/UIButton";
 import { MdOutlineAccountCircle } from "react-icons/md";
-import classes from "../Styles/components/project.module.scss";
+import classes from "../../styles/components/project.module.scss";
 import { IoNotificationsOutline } from "react-icons/io5";
-import { useNavigate } from "react-router-dom";
-import router from "next/router";
+import router, { useRouter } from "next/router";
+import axios from "axios";
+import Redact from "../../components/Redact";
 
 const ProjectPage = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [project, setProject] = useState<IProject | null>(null);
+ 
+    
+    const router = useRouter();
+    const { id } = router.query;
+
+    
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
       };
@@ -32,12 +40,15 @@ const ProjectPage = () => {
         setIsModalOpen(false);
       };
 
+      useEffect(() => {
+        if (id) {
+          axios.get(`http://localhost:5000/projects/` + id)
+            .then(response => setProject(response.data))
+            .catch(error => console.error('Error:', error));
+        }
+      }, [id]);
+      
 
-    const startDate: Date = new Date(2023, 11, 16);
-    const endDate: Date = new Date(2023, 11, 16);
-
-    const projects: IProject = {project_id: 1, p_name: 'name', description: 'description', skills: 'skills', startdate: startDate, endgate: endDate, published: 1, status: 'string'}
-    
     const dateReg: Date = new Date(2023, 11, 16);
     
     const members: IStudent = {
@@ -52,7 +63,6 @@ const ProjectPage = () => {
         <div className={classes['Project']}>
             <header className={classes["Project__Header"]}>
                 <img onClick={() => router.push("/")} src="/images/IThub.b190e489.svg" alt="" />
-                <UIButton onClick={openModal} type="string" children='Предложить проект'/>
                 <input className={classes['Project__Header-input']} placeholder="Поиск проекта" type="text" />
                 <IoNotificationsOutline style={{scale:"1.5"}}/>
                 <div className={classes["dropdown"]}>
@@ -68,8 +78,12 @@ const ProjectPage = () => {
             </header>
             <div className={classes['Project__Main']}>
                 <div className={classes['Project__Main-name']}>
-                      <h1>{projects.p_name}</h1>
-                      <div className={classes['Project__Main-status']}>{projects.status}</div>
+                      <h1>{project?.p_name}</h1>
+                      <div className={classes['Project__Main-status']}>
+                <div className={project?.status === 'В процессе' ? 'blue' : project?.status === 'Завершен' ? 'green' : 'red'}>
+                    {project?.status}
+                </div>
+                </div>
                 </div>
                 <div className={classes['Project__Main__Members']}>
                     <h2>Участники</h2>
@@ -80,23 +94,30 @@ const ProjectPage = () => {
                  </ul>
                 </div>
                 <div className={classes['Project__Main__Discription']}>
-                  <p>{projects.description}</p>
+                  <p>{project?.description}</p>
                 </div>
                 <div className={classes['Project__Main__Skills']}>
                   <h2>Навыки</h2>
-                  <ul className={classes['Project__Main__Skills-list']}>
-                      <li>{projects.skills}</li>
-                      <li>{projects.skills}</li>
-                      <li>{projects.skills}</li>
-                  </ul>
+                  <p className={classes['Project__Main__Skills-list']}>
+                      {project?.skills}
+                  </p>
                 </div>
                 <div className={classes['Project__Buttons']}>
-                <UIButton type="number" children="Редактировать"/>
+                <UIButton onClick={openModal} type="number" children="Редактировать"/>
                 <UIButton type="number" children="Пригласить"/>
                 <UIButton type="active" children="Удалить участника"/>
                 <UIButton type="active" children="Покинуть"/>
                 </div>
             </div>
+            <Redact isOpen={isModalOpen} onClose={closeModal} 
+             initialValues={{ 
+              name: project?.p_name ?? "", 
+              description: project?.description ?? "", 
+              skills: project?.skills ?? "" 
+            }}
+            >
+            
+            </Redact>
         </div>
     )
 }

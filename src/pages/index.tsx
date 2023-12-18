@@ -10,22 +10,38 @@ import router from "next/router";
 import { IProject } from "@/types/project";
 import ProjectList from "@/components/ProjectList";
 import Create from "../components/Create";
+import axios from "axios";
 
 
 const Main =()=>{
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [projects, setProjects] = useState<IProject[]>([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filteredProjects, setFilteredProjects] = useState<IProject[]>([]);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    
-    const startDate: Date = new Date(2023, 11, 16);
-    const endDate: Date = new Date(2023, 11, 16);
 
-    const projects :IProject[] = [
-      {project_id: 1, p_name: 'name', description: 'description', skills: 'skills', startdate: startDate, endgate: endDate, published: 1, status: 'string'},
-      {project_id: 2, p_name: 'name2', description: 'description2', skills: 'skills2', startdate: startDate, endgate: endDate, published: 1, status: 'string'},
-      {project_id: 3, p_name: 'name3', description: 'description3', skills: 'skills3', startdate: startDate, endgate: endDate, published: 1, status: 'string'}
-    ]
+    const handleSearchTermChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const term = event.target.value;
+      setSearchTerm(term);
+  
+      const filtered = projects.filter((project) =>
+        project.p_name.toLowerCase().includes(term.toLowerCase())
+      );
+      setFilteredProjects(filtered);
+    };
 
+    useEffect(() => {
+      axios
+        .get("http://localhost:5000/projects")
+        .then((response) => {
+          const fetchedProjects = response.data;
+          setProjects(fetchedProjects);
+          setFilteredProjects(fetchedProjects);
+        })
+        .catch((error) => console.error("Error:", error));
+    }, []);
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -48,29 +64,45 @@ const Main =()=>{
       const closeModal = () => {
         setIsModalOpen(false);
       };
-    
+
+      useEffect(() => {
+        axios.get("http://localhost:5000/projects")
+        .then(response => setProjects(response.data))
+        .catch(error => console.error('Error:', error));
+      }, []);
+
     return(
         <div className={classes["Main"]}>
             <header className={classes["Main__Header"]}>
                 <img onClick={() => router.push("/")} src="/images/IThub.b190e489.svg" alt="" />
                 <UIButton onClick={openModal} type="string" children='Предложить проект'/>
-                <input className={classes['Main__Header-input']} placeholder="Поиск проекта" type="text" />
+                <input
+                className={classes['Main__Header-input']} placeholder="Поиск проекта" type="text" onChange={handleSearchTermChange} />
                 <IoNotificationsOutline style={{scale:"1.5"}}/>
-                <UIButton onClick={() => router.push("/reg")} type="number" children='Войти'/>
-                <div className={classes["dropdown"]}>
-                    <MdOutlineAccountCircle style={{scale:"2"}} onMouseEnter={toggleMenu} />
-                    {isMenuOpen  && (
-                    <div onMouseLeave={toggleMenu} className={classes["dropdown-menu"]}>
-                    <div style={{cursor:"pointer"}} onClick={() => router.push("/portfolio")}>Портфолио</div>
-                    <div onClick={handleLogout}>Выход</div>
-                </div>
-      )}
-                </div>
+                
+                
+                {
+                   isLoggedIn ? (
+                   <div className={classes["dropdown"]}>
+                    <MdOutlineAccountCircle style={{ scale: "2" }} onMouseEnter={toggleMenu} />
+                   {isMenuOpen && (
+                     <div onMouseLeave={toggleMenu} className={classes["dropdown-menu"]}>
+                        <div style={{ cursor: "pointer" }} onClick={() => router.push("/portfolio")}>
+                           Портфолио
+                         </div>
+                        <div onClick={handleLogout}>Выход</div>
+                      </div>
+                    )}
+                    </div>
+  ) : (
+    <UIButton onClick={() => router.push("/reg")} type="number" children="Войти" />
+  )
+}
                 
             </header>
             
             <div className={classes['Main__Projects']}>
-                  <ProjectList projects={projects}/>
+                  <ProjectList projects={searchTerm ? filteredProjects : projects}/>
             </div>
             <Create isOpen={isModalOpen} onClose={closeModal}>
             
@@ -80,3 +112,7 @@ const Main =()=>{
 }
 
 export default Main
+
+function setProjects(data: any): any {
+  throw new Error("Function not implemented.");
+}

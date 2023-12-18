@@ -21,10 +21,10 @@
     }
    }
    &__Projects{
-    justify-items: center;
     display: grid;
-    margin: 0 200px;
-    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+    justify-content: center;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 20px;
    } 
 }
 

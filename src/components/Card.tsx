@@ -1,7 +1,6 @@
 import router from 'next/router';
 import clasess from '../Styles/components/card.module.scss';
 import UIButton from './UIButton';
-import { useNavigate } from 'react-router-dom';
 import { IProject } from '@/types/project';
 
 interface ICard {
@@ -17,14 +16,12 @@ const Card:React.FC<ICard> = ({project}: ICard) => {
             <p className={clasess['Card__description']}>{project.description}</p>
             <div className={clasess['Card__Skills']}>
             <h2>Навыки</h2>
-            <ul className={clasess['Card__Skills-list']}>
-                <li>{project.skills}</li>
-                <li>{project.skills}</li>
-                <li>{project.skills}</li>
-            </ul>
+            <p className={clasess['Card__Skills-list']}>
+                {project.skills}
+            </p>
             </div>
             <div className={clasess['Card__button']}>
-                <UIButton onClick={() => router.push("/project" + project.project_id)} type='number' children='Подробнее'/>
+                <UIButton onClick={() => router.push('/project/' + project.project_id)} type='number' children='Подробнее'/>
                 </div>
         </div>
     )
